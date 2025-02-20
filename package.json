@@ -1,0 +1,15 @@
+{
+  "name": "shex2sparql",
+  "version": "1.0.0",
+  "description": "Script to convert Shape Expressions in .shex format to SPARQL CONSTRUCT, SELECT, or ASK queries.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christoph Göpfert",
+  "license": "ISC",
+  "dependencies": {
+    "@shexjs/parser": "^1.0.0-alpha.28"
+  }
+}
