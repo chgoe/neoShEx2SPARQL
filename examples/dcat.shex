@@ -1,0 +1,160 @@
+# metamodel_version: 1.7.0
+BASE <http://www.w3.org/ns/dcat#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX odrl: <http://www.w3.org/ns/odrl/2/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX adms: <http://www.w3.org/ns/adms#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+
+
+start=@<Dataset>
+
+
+<Agent> CLOSED {
+    (  
+       rdf:type [ foaf:Agent ] 
+    )
+}
+
+<Attribution> CLOSED {
+    (  
+       rdf:type [ prov:Attribution ] 
+    )
+}
+
+<Concept> CLOSED {
+    (  
+       rdf:type [ skos:Concept ] 
+    )
+}
+
+<Dataset> CLOSED {
+    (  $<Dataset_tes> (
+          <inSeries> @<DatasetSeries> ? ;
+          <spatialResolutionInMeters> xsd:decimal ? ;
+          <temporalResolution> xsd:duration ? ;
+          dcterms:accrualPeriodicity @<Frequency> ? ;
+          dcterms:spatial @<Location> ? ;
+          dcterms:temporal @<PeriodOfTime> ? ;
+          prov:wasGeneratedBy @<Entity> ? ;
+          adms:status @<Concept> ? ;
+          adms:versionNotes xsd:string ? ;
+          <contactPoint> @<Kind> ? ;
+          <hasCurrentVersion> xsd:string ? ;
+          <first> xsd:string ? ;
+          <hasVersion> xsd:string ? ;
+          <keyword> xsd:string ? ;
+          <landingPage> @<Document> ? ;
+          <last> xsd:string ? ;
+          <prev> xsd:string ? ;
+          <previousVersion> xsd:string ? ;
+          <qualifiedRelation> @<Relationship> ? ;
+          <theme> xsd:string ? ;
+          <version> xsd:string ? ;
+          dcterms:accessRights xsd:string ? ;
+          dcterms:conformsTo @<Standard> ? ;
+          dcterms:creator @<Agent> ? ;
+          dcterms:description xsd:string ? ;
+          dcterms:hasPart xsd:string ? ;
+          dcterms:identifier xsd:string ? ;
+          dcterms:isReferencedBy xsd:string ? ;
+          dcterms:issued xsd:string ? ;
+          dcterms:language @<LinguisticSystem> ? ;
+          dcterms:license @<LicenseDocument> ? ;
+          dcterms:modified @<LicenseDocument> ? ;
+          dcterms:publisher @<Agent> ? ;
+          dcterms:relation xsd:string ? ;
+          dcterms:replaces xsd:string ? ;
+          dcterms:rights @<RightsStatement> ? ;
+          dcterms:title xsd:string ? ;
+          dcterms:type xsd:string ? ;
+          odrl:hasPolicy @<Policy> ? ;
+          prov:qualifiedAttribution @<Attribution> ?
+       ) ;
+       rdf:type [ <Dataset> ]
+    )
+}
+
+<DatasetSeries> CLOSED {
+    (
+       rdf:type [ <DatasetSeries> ]
+    )
+}
+
+<Document> CLOSED {
+    (
+       rdf:type [ foaf:Document ]
+    )
+}
+
+<Entity> CLOSED {
+    (
+       rdf:type [ prov:Entity ]
+    )
+}
+
+<Frequency> CLOSED {
+    (
+       rdf:type [ dcterms:Frequency ]
+    )
+}
+
+<Kind> CLOSED {
+    (
+       rdf:type [ vcard:Kind ]
+    )
+}
+
+<LicenseDocument> CLOSED {
+    (
+       rdf:type [ dcterms:LicenseDocument ]
+    )
+}
+
+<LinguisticSystem> CLOSED {
+    (
+       rdf:type [ dcterms:LinguisticSystem ]
+    )
+}
+
+<Location> CLOSED {
+    (
+       rdf:type [ dcterms:Location ]
+    )
+}
+
+<PeriodOfTime> CLOSED {
+    (
+       rdf:type [ dcterms:PeriodOfTime ]
+    )
+}
+
+<Policy> CLOSED {
+    (
+       rdf:type [ odrl:Policy ]
+    )
+}
+
+<Relationship> CLOSED {
+    (
+       rdf:type [ <Relationship> ]
+    )
+}
+
+<RightsStatement> CLOSED {
+    (
+       rdf:type [ dcterms:RightsStatement ]
+    )
+}
+
+<Standard> CLOSED {
+    (
+       rdf:type [ dcterms:Standard ]
+    )
+}
+
+

@@ -2,7 +2,7 @@ const shex2sparql = require("./shex2sparql/shex2sparql.js")
 
 
 // construct a SPARQL CONSTRUCT query for any instance data of a shape
-const query = shex2sparql("examples/person.shex", "CONSTRUCT");
+const query = shex2sparql("examples/lio.shex", "CONSTRUCT");
 
 // OR: construct a SPARQL CONSTRUCT query for instance data of a shape with a certain URI
 //const query = shex2sparql("examples/person.shex", "CONSTRUCT", "https://example.org/John_Doe");

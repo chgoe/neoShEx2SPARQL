@@ -1,0 +1,25 @@
+# metamodel_version: 1.7.0
+BASE <https://example.org/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX lio: <https://w3id.org/lio/v1#>
+
+
+start=@<Image>
+
+<Image> CLOSED {
+    (  $<Image_tes> (  lio:hasDepictedBackground xsd:string ? ;
+          lio:hasPictorialBackground xsd:string ? ;
+          lio:hasSetting xsd:string ? ;
+          lio:hasTag xsd:string ? ;
+          lio:location xsd:string ? ;
+          lio:materials xsd:string ? ;
+          lio:shows xsd:string ? ;
+          lio:style xsd:string ? ;
+          lio:technique xsd:string ?
+       ) ;
+       rdf:type [ lio:Image ]
+    )
+}
+
+
