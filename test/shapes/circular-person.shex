@@ -1,0 +1,10 @@
+BASE <https://example.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+start=@<Person>
+
+<Person> {
+    foaf:name xsd:string ;
+    foaf:friend @<Person>
+}

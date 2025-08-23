@@ -1,0 +1,17 @@
+BASE <https://example.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+start=@<A>
+
+<A> {
+    foaf:relatedTo @<B>
+}
+
+<B> {
+    foaf:relatedTo @<C>
+}
+
+<C> {
+    foaf:relatedTo @<A>
+}

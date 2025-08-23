@@ -1,0 +1,17 @@
+BASE <https://example.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX ex: <https://example.org/>
+
+start=@<Person>
+
+<Person> @<PersonBase> AND NOT @<Robot>
+
+<PersonBase> {
+    foaf:name xsd:string
+}
+
+<Robot> {
+    foaf:name xsd:string ;
+    ex:serialNumber xsd:string
+}

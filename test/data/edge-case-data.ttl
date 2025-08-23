@@ -1,0 +1,82 @@
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ex: <https://example.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Circular recursion data
+ex:alice a foaf:Person ;
+    foaf:name "Alice Smith" ;
+    foaf:friend ex:bob, ex:charlie .
+
+ex:bob a foaf:Person ;
+    foaf:name "Bob Jones" ;
+    foaf:friend ex:alice, ex:charlie .
+
+ex:charlie a foaf:Person ;
+    foaf:name "Charlie Brown" ;
+    foaf:friend ex:alice .
+
+# Cardinality test data
+ex:person1 a foaf:Person ;
+    foaf:name "John", "Johnny", "Jon" ;
+    foaf:age 30 ;
+    foaf:email "john@example.com", "john.doe@work.com" ;
+    foaf:friend ex:person2, ex:person3 .
+
+ex:person2 a foaf:Person ;
+    foaf:name "Jane" ;
+    foaf:age 25 ;
+    foaf:friend ex:person1 .
+
+ex:person3 a foaf:Person ;
+    foaf:name "Jim" ;
+    foaf:age 35 .
+
+# Organization data for OR shapes
+ex:company1 a foaf:Organization ;
+    foaf:name "Tech Corp" ;
+    ex:employeeCount 500 .
+
+ex:company2 a foaf:Organization ;
+    foaf:name "Small Startup" ;
+    ex:employeeCount 10 .
+
+# Value set test data
+ex:validPerson a foaf:Person ;
+    foaf:name "John" ;
+    foaf:status ex:Active ;
+    foaf:country <http://example.org/countries/USA> ;
+    foaf:category "category:employee" ;
+    foaf:lang "en" .
+
+ex:invalidPerson a foaf:Person ;
+    foaf:name "InvalidName" ;
+    foaf:status ex:Unknown ;
+    foaf:country <http://other.org/countries/UK> ;
+    foaf:category "other:contractor" .
+
+# Node kind test data
+ex:iriPerson foaf:name <http://example.org/names/JohnDoe> ;
+    foaf:homepage <http://johndoe.com> ;
+    foaf:phone _:phone1 ;
+    foaf:description "A person named John" ;
+    foaf:identifier <http://example.org/id/123> .
+
+_:phone1 foaf:number "555-1234" .
+
+# Deep recursion test data
+ex:a foaf:relatedTo ex:b .
+ex:b foaf:relatedTo ex:c .
+ex:c foaf:relatedTo ex:a .
+
+# Facet constraint test data
+ex:validFacetPerson a foaf:Person ;
+    foaf:name "John Doe" ;
+    foaf:age 25 ;
+    foaf:email "john.doe@example.com" ;
+    foaf:description "This is a longer description that meets the minimum length requirement." .
+
+ex:invalidFacetPerson a foaf:Person ;
+    foaf:name "john" ;  # Invalid pattern - should be "First Last"
+    foaf:age 200 ;      # Invalid range
+    foaf:email "invalid-email" ;  # Invalid email pattern
+    foaf:description "Short" .    # Too short

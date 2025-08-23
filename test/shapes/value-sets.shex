@@ -1,0 +1,14 @@
+BASE <https://example.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX ex: <https://example.org/>
+
+start=@<Person>
+
+<Person> {
+    foaf:name [ "John" "Jane" "Bob" "Alice" ] ;
+    foaf:status [ ex:Active ex:Inactive ] ;
+    foaf:country IRI /^http:\/\/example\.org\/countries\// ;
+    foaf:category LITERAL /^category:/ ;
+    foaf:lang ["en" "fr" "de"]
+}

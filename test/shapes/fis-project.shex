@@ -1,0 +1,25 @@
+BASE <https://example.org/>
+PREFIX kdsf: <http://kerndatensatz-forschung.de/owl/Basis#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+start=@<Project>
+
+<Project> {
+    rdf:type [ kdsf:Drittmittelprojekt ] ;
+    rdfs:label xsd:string ;
+    vivo:dateTimeInterval @<DateTimeInterval>
+}
+
+<DateTimeInterval> {
+    rdf:type [ vivo:DateTimeInterval ] ;
+    vivo:start @<DateTimeValue> ;
+    vivo:end @<DateTimeValue>
+}
+
+<DateTimeValue> {
+    rdf:type [ vivo:DateTimeValue ] ;
+    vivo:dateTime xsd:dateTime
+}

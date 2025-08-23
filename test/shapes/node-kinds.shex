@@ -1,0 +1,13 @@
+BASE <https://example.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+start=@<Person>
+
+<Person> {
+    foaf:name IRI ;
+    foaf:homepage IRI ? ;
+    foaf:phone BNODE ;
+    foaf:description LITERAL ;
+    foaf:identifier NONLITERAL
+}

@@ -1,0 +1,18 @@
+BASE <https://example.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX ex: <https://example.org/>
+
+start=@<PersonOrOrg>
+
+<PersonOrOrg> @<Person> OR @<Organization>
+
+<Person> {
+    foaf:name xsd:string ;
+    foaf:age xsd:integer ?
+}
+
+<Organization> {
+    foaf:name xsd:string ;
+    ex:employeeCount xsd:integer ?
+}

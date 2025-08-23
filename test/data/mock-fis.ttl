@@ -1,0 +1,76 @@
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix kdsf: <http://kerndatensatz-forschung.de/owl/Basis#> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix vivo:  <http://vivoweb.org/ontology/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+
+<https://tucid.tu-chemnitz.de/giim/individual/johndoe> a foaf:Person ;
+    rdfs:label "Doe, John" ;
+    obo:ARG_2000028 <https://tucid.tu-chemnitz.de/giim/individual/contact-johndoe> .
+
+<https://tucid.tu-chemnitz.de/giim/individual/contact-johndoe> a vcard:Kind, vcard:Individual ;
+    vcard:hasName <https://tucid.tu-chemnitz.de/giim/individual/personName-johndoe> .
+
+<https://tucid.tu-chemnitz.de/giim/individual/personName-johndoe> a vcard:Name ;
+    vcard:familyName "Doe" ;
+    vcard:givenName "John" .
+
+
+
+<https://tucid.tu-chemnitz.de/giim/individual/janedoe> a foaf:Person ;
+    rdfs:label "Doe, Jane" ;
+    obo:ARG_2000028 <https://tucid.tu-chemnitz.de/giim/individual/contact-janedoe> .
+
+<https://tucid.tu-chemnitz.de/giim/individual/contact-janedoe> a vcard:Kind, vcard:Individual ;
+    vcard:hasName <https://tucid.tu-chemnitz.de/giim/individual/personName-janedoe> .
+
+<https://tucid.tu-chemnitz.de/giim/individual/personName-janedoe> a vcard:Name ;
+    vcard:familyName "Doe" ;
+    vcard:givenName "Jane" .
+
+
+
+<https://tucid.tu-chemnitz.de/giim/individual/fakePersonNoType> rdfs:label "Fake Person, no Type!" ;
+    obo:ARG_2000028 <https://tucid.tu-chemnitz.de/giim/individual/contact-fakePersonNoType> .
+
+<https://tucid.tu-chemnitz.de/giim/individual/contact-fakePersonNoType> a vcard:Kind, vcard:Individual ;
+    vcard:hasName <https://tucid.tu-chemnitz.de/giim/individual/personName-fakePersonNoType> .
+
+<https://tucid.tu-chemnitz.de/giim/individual/personName-fakePersonNoType> a vcard:Name ;
+    vcard:familyName "Fake person" ;
+    vcard:givenName "No type!" .
+
+
+
+<https://tucid.tu-chemnitz.de/giim/individual/dummyproject> a kdsf:Drittmittelprojekt ;
+    rdfs:label "Dummy Project" ;
+    vivo:dateTimeInterval <https://tucid.tu-chemnitz.de/giim/individual/projectInterval-dummyproject> .
+
+<https://tucid.tu-chemnitz.de/giim/individual/projectInterval-dummyproject> a vivo:DateTimeInterval ;
+    vivo:start <https://tucid.tu-chemnitz.de/giim/individual/projectStartDate-dummyproject> ;
+    vivo:end <https://tucid.tu-chemnitz.de/giim/individual/projectEndDate-dummyproject> .
+
+<https://tucid.tu-chemnitz.de/giim/individual/projectStartDate-dummyproject> a vivo:DateTimeValue ;
+    vivo:dateTime "2000-01-01T00:00:00"^^xsd:dateTime .
+
+<https://tucid.tu-chemnitz.de/giim/individual/projectEndDate-dummyproject> a vivo:DateTimeValue ;
+    vivo:dateTime "2000-12-31T00:00:00"^^xsd:dateTime .
+
+
+
+<https://tucid.tu-chemnitz.de/giim/individual/fakeProjectNoType> rdfs:label "Dummy Project" ;
+    vivo:dateTimeInterval <https://tucid.tu-chemnitz.de/giim/individual/projectInterval-fakeProjectNoType> .
+
+<https://tucid.tu-chemnitz.de/giim/individual/projectInterval-fakeProjectNoType> a vivo:DateTimeInterval ;
+    vivo:end <https://tucid.tu-chemnitz.de/giim/individual/projectEndDate-fakeProjectNoType> ;
+    vivo:start <https://tucid.tu-chemnitz.de/giim/individual/projectStartDate-fakeProjectNoType> .
+
+<https://tucid.tu-chemnitz.de/giim/individual/projectEndDate-fakeProjectNoType> a vivo:DateTimeValue ;
+    vivo:dateTime "2000-12-31T00:00:00"^^xsd:dateTime .
+
+<https://tucid.tu-chemnitz.de/giim/individual/projectStartDate-fakeProjectNoType> a vivo:DateTimeValue ;
+    vivo:dateTime "2000-01-01T00:00:00"^^xsd:dateTime .

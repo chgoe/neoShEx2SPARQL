@@ -5,11 +5,33 @@
   "main": "src/main.js",
   "scripts": {
     "start": "node src/main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:verbose": "jest --verbose"
   },
   "author": "Christoph Göpfert",
   "license": "ISC",
   "dependencies": {
     "@shexjs/parser": "^1.0.0-alpha.28"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "sparqljs": "^3.7.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/test/**/*.test.js",
+      "**/test/**/*.spec.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/setup.js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/main.js"
+    ],
+    "verbose": true
   }
 }

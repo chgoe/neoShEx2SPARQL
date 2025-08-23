@@ -1,0 +1,29 @@
+BASE <https://example.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX ex: <https://example.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+start=@<ComplexPerson>
+
+<ComplexPerson> {
+    foaf:name xsd:string ;
+    (
+        ( foaf:email xsd:string ; 
+          foaf:phone xsd:string ) |
+        foaf:address xsd:string
+    ) ;
+    (
+        ex:workplace @<Organization> |
+        ex:school @<School>
+    )?
+}
+
+<Organization> {
+    foaf:name xsd:string ;
+    ex:type xsd:string
+}
+
+<School> {
+    foaf:name xsd:string ;
+    ex:level xsd:string
+}

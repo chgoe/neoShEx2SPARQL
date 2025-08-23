@@ -1,0 +1,47 @@
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix ex: <https://example.org/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Person data
+ex:john a foaf:Person ;
+    vcard:familyName "Doe" ;
+    vcard:givenName "John" ;
+    foaf:age 30 ;
+    foaf:knows ex:jane .
+
+ex:jane a foaf:Person ;
+    vcard:familyName "Smith" ;
+    vcard:givenName "Jane" ;
+    foaf:age 25 ;
+    foaf:knows ex:john .
+
+ex:bob a foaf:Person ;
+    vcard:familyName "Wilson" ;
+    foaf:age 35 .
+
+# Dataset data
+ex:dataset1 a dcat:Dataset ;
+    dct:title "Sample Dataset 1" ;
+    dct:description "This is a sample dataset for testing" ;
+    dcat:keyword "sample", "test", "data" ;
+    dct:issued "2023-01-15"^^xsd:date ;
+    dcat:distribution ex:dist1 .
+
+ex:dataset2 a dcat:Dataset ;
+    dct:title "Sample Dataset 2" ;
+    dct:description "Another sample dataset" ;
+    dcat:keyword "example", "demo" ;
+    dct:issued "2023-02-20"^^xsd:date .
+
+ex:dist1 a dcat:Distribution ;
+    dcat:downloadURL <https://example.org/data1.csv> ;
+    dcat:mediaType "text/csv" .
+
+# Organization data
+ex:org1 a foaf:Organization ;
+    foaf:name "Example Organization" ;
+    foaf:homepage <https://example.org> ;
+    foaf:member ex:john, ex:jane .

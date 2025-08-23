@@ -1,0 +1,4 @@
+BASE <https://example.org/>
+start=@<EmptyShape>
+
+<EmptyShape> {}

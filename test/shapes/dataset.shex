@@ -1,0 +1,19 @@
+BASE <https://example.org/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+start=@<Dataset>
+
+<Dataset> {
+    dct:title xsd:string ;
+    dct:description xsd:string ? ;
+    dcat:keyword xsd:string * ;
+    dct:issued xsd:date ? ;
+    dcat:distribution @<Distribution> *
+}
+
+<Distribution> {
+    dcat:downloadURL IRI ? ;
+    dcat:mediaType xsd:string ?
+}

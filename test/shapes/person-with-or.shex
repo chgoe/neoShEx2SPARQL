@@ -1,0 +1,11 @@
+BASE <https://example.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+start=@<Person>
+
+<Person> {
+    vcard:familyName xsd:string ;
+    ( vcard:givenName xsd:string | foaf:nick xsd:string )
+}

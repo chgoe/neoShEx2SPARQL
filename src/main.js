@@ -1,8 +1,12 @@
+const neoshex2sparql = require("./neoshex2sparql/shex2sparql.js")
 const shex2sparql = require("./shex2sparql/shex2sparql.js")
 
 
 // construct a SPARQL CONSTRUCT query for any instance data of a shape
-const query = shex2sparql("examples/lio.shex", "CONSTRUCT");
+let query = shex2sparql("test/shapes/eachof-oneof.shex", "CONSTRUCT");
+console.log(query)
+query = neoshex2sparql("test/shapes/eachof-oneof.shex", "CONSTRUCT");
+console.log(query)
 
 // OR: construct a SPARQL CONSTRUCT query for instance data of a shape with a certain URI
 //const query = shex2sparql("examples/person.shex", "CONSTRUCT", "https://example.org/John_Doe");

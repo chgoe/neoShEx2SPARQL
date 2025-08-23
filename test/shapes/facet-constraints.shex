@@ -1,0 +1,12 @@
+BASE <https://example.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+start=@<Person>
+
+<Person> {
+    foaf:name xsd:string PATTERN "^[A-Z][a-z]+ [A-Z][a-z]+$" ;
+    foaf:age xsd:integer MININCLUSIVE 0 MAXINCLUSIVE 150 ;
+    foaf:email xsd:string PATTERN "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" ;
+    foaf:description xsd:string MINLENGTH 10 MAXLENGTH 500
+}
