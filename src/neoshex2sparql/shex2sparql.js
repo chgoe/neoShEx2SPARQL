@@ -19,17 +19,16 @@ class SimplifiedShexToSparqlConverter {
     constructor(schema = null) {
         this.triplePatterns = [];
         this.filters = [];
-        this.unionBlocks = []; // New: to store union patterns
-        this.minusBlocks = []; // New: to store minus patterns for ShapeNot
+        this.unionBlocks = [];
+        this.minusBlocks = [];
         this.schema = schema;
         this.queryForm = 'SELECT';
         this.visitedShapes = new Set(); // To prevent infinite recursion
         this.currentUnionGroup = null; // Track current union processing
+        this.shapeSubqueries = []; // Track subqueries for each shape
+        this.currentShapeContext = null; // Track current shape being processed
     }
 
-    /**
-     * Main conversion method
-     */
     convert(queryForm, uri = "") {
         // Reset state
         this.triplePatterns = [];
@@ -38,6 +37,8 @@ class SimplifiedShexToSparqlConverter {
         this.minusBlocks = [];
         this.visitedShapes.clear();
         this.currentUnionGroup = null;
+        this.shapeSubqueries = [];
+        this.currentShapeContext = null;
 
         // Find and process start shape
         const startShape = this.findStartShape();
@@ -46,7 +47,7 @@ class SimplifiedShexToSparqlConverter {
         }
 
         const startVariable = this.generateShapeVariable(startShape);
-        this.visitShape(startShape, startVariable);
+        this.visitShape(startShape, startVariable, true);
 
         // Generate SPARQL query based on form
         switch (queryForm.toUpperCase()) {
@@ -61,18 +62,50 @@ class SimplifiedShexToSparqlConverter {
         }
     }
 
-    /**
-     * Visitor for Shape elements
-     */
-    visitShape(shape, subjectVar) {
+    visitShape(shape, subjectVar, isStartShape = false) {
         // Prevent infinite recursion
         if (this.visitedShapes.has(shape.id)) {
             return;
         }
         this.visitedShapes.add(shape.id);
 
-        if (shape.shapeExpr) {
-            this.visitShapeExpression(shape.shapeExpr, subjectVar);
+        // For non-start shapes, create a new shape context
+        if (!isStartShape) {
+            // Save the current context
+            const savedTriplePatterns = this.triplePatterns;
+            const savedFilters = this.filters;
+            
+            // Create a new context for this shape
+            this.triplePatterns = [];
+            this.filters = [];
+            this.currentShapeContext = {
+                shapeId: shape.id,
+                subjectVar: subjectVar
+            };
+            
+            if (shape.shapeExpr) {
+                this.visitShapeExpression(shape.shapeExpr, subjectVar);
+            }
+            
+            // Store the subquery for this shape if it has patterns
+            if (this.triplePatterns.length > 0 || this.filters.length > 0) {
+                this.shapeSubqueries.push({
+                    shapeId: shape.id,
+                    subjectVar: subjectVar,
+                    triplePatterns: [...this.triplePatterns],
+                    filters: [...this.filters]
+                });
+            }
+            
+            // Restore the previous context
+            this.triplePatterns = savedTriplePatterns;
+            this.filters = savedFilters;
+            this.currentShapeContext = null;
+        } else {
+            // For start shape, process normally at the top level
+            if (shape.shapeExpr) {
+                this.visitShapeExpression(shape.shapeExpr, subjectVar);
+            }
         }
     }
 
@@ -138,9 +171,6 @@ class SimplifiedShexToSparqlConverter {
         }
     }
 
-    /**
-     * Visitor for TripleConstraint elements
-     */
     visitTripleConstraint(tripleConstraint, subjectVar) {
         const predicate = tripleConstraint.predicate;
         
@@ -159,7 +189,7 @@ class SimplifiedShexToSparqlConverter {
                 const shapeVariable = this.generateShapeVariable(referencedShape);
                 this.triplePatterns.push(`${subjectVar} <${predicate}> ${shapeVariable} .`);
                 if (referencedShape) {
-                    this.visitShape(referencedShape, shapeVariable);
+                    this.visitShape(referencedShape, shapeVariable, false);
                 }
             } else {
                 this.visitShapeExpression(tripleConstraint.valueExpr, objectVar);
@@ -167,12 +197,9 @@ class SimplifiedShexToSparqlConverter {
         }
 
         // Handle cardinality (simplified - ignore min/max for now as per requirements)
-        // Note: Cardinality constraints are fully ignored per requirements
+        // Note: Cardinality constraints are fully ignored as most queries would just run into timeouts...
     }
 
-    /**
-     * Visitor for NodeConstraint elements
-     */
     visitNodeConstraint(nodeConstraint, variable) {
         if (nodeConstraint.datatype) {
             this.filters.push(`FILTER(datatype(${variable}) = <${nodeConstraint.datatype}>)`);
@@ -355,6 +382,11 @@ class SimplifiedShexToSparqlConverter {
         // Add main triple patterns
         this.triplePatterns.forEach(pattern => allPatterns.add(pattern));
         
+        // Add patterns from shape subqueries
+        this.shapeSubqueries.forEach(subquery => {
+            subquery.triplePatterns.forEach(pattern => allPatterns.add(pattern));
+        });
+        
         // Add patterns from union blocks
         this.unionBlocks.forEach(unionGroup => {
             unionGroup.forEach(branch => {
@@ -376,29 +408,55 @@ class SimplifiedShexToSparqlConverter {
         const allTriplePatterns = this.getAllTriplePatterns();
         let constructClause = allTriplePatterns.join('\n  ');
         
-        if (this.unionBlocks.length > 0 || this.minusBlocks.length > 0) {
-            // Handle CONSTRUCT with UNION and/or MINUS blocks
-            let whereClause = this.buildQueryWithUnions('').replace(/^.*WHERE\s*\{/, '').replace(/\}$/, '').trim();
-
-            if (uri) {
-                const replacement = `<${uri}>`;
-                constructClause = constructClause.replace(new RegExp(startVariable.replace('?', '\\?'), 'g'), replacement);
-                whereClause = whereClause.replace(new RegExp(startVariable.replace('?', '\\?'), 'g'), replacement);
-            }
-
-            return `CONSTRUCT {\n  ${constructClause}\n}\nWHERE {\n  ${whereClause}\n}`;
-        } else {
-            // Simple CONSTRUCT without unions
-            let whereClause = this.triplePatterns.concat(this.filters).join('\n  ');
-
-            if (uri) {
-                const replacement = `<${uri}>`;
-                constructClause = constructClause.replace(new RegExp(startVariable.replace('?', '\\?'), 'g'), replacement);
-                whereClause = whereClause.replace(new RegExp(startVariable.replace('?', '\\?'), 'g'), replacement);
-            }
-
-            return `CONSTRUCT {\n  ${constructClause}\n}\nWHERE {\n  ${whereClause}\n}`;
+        // Build WHERE clause with subqueries
+        let whereClause = '';
+        
+        // Add main triple patterns (from start shape)
+        if (this.triplePatterns.length > 0) {
+            whereClause += this.triplePatterns.join('\n  ');
         }
+        
+        // Add subqueries for each shape
+        this.shapeSubqueries.forEach(subquery => {
+            const subqueryPatterns = subquery.triplePatterns.concat(subquery.filters);
+            whereClause += '\n  {\n    SELECT * WHERE {\n      ';
+            whereClause += subqueryPatterns.join('\n      ');
+            whereClause += '\n    }\n  }';
+        });
+        
+        // Add main filters (from start shape)
+        if (this.filters.length > 0) {
+            whereClause += '\n  ' + this.filters.join('\n  ');
+        }
+        
+        // Handle unions if present
+        if (this.unionBlocks.length > 0) {
+            const unionGroups = this.unionBlocks.map(unionGroup => {
+                const branches = unionGroup.map(branch => {
+                    const branchPatterns = branch.triplePatterns.concat(branch.filters);
+                    return `{\n    ${branchPatterns.join('\n    ')}\n  }`;
+                });
+                return branches.join(' UNION ');
+            });
+            whereClause += '\n  ' + unionGroups.join('\n  ');
+        }
+        
+        // Handle minus blocks if present
+        if (this.minusBlocks.length > 0) {
+            const minusGroups = this.minusBlocks.map(minusBlock => {
+                const minusPatterns = minusBlock.triplePatterns.concat(minusBlock.filters);
+                return `MINUS {\n    ${minusPatterns.join('\n    ')}\n  }`;
+            });
+            whereClause += '\n  ' + minusGroups.join('\n  ');
+        }
+
+        if (uri) {
+            const replacement = `<${uri}>`;
+            constructClause = constructClause.replace(new RegExp(startVariable.replace('?', '\\?'), 'g'), replacement);
+            whereClause = whereClause.replace(new RegExp(startVariable.replace('?', '\\?'), 'g'), replacement);
+        }
+
+        return `CONSTRUCT {\n  ${constructClause}\n}\nWHERE {\n  ${whereClause}\n}`;
     }
 
     buildQueryWithUnions(queryType) {
@@ -441,38 +499,100 @@ class SimplifiedShexToSparqlConverter {
     }
 
     buildSelectQuery() {
-        if (this.unionBlocks.length > 0 || this.minusBlocks.length > 0) {
-            // Generate query with UNION and/or MINUS blocks
-            return this.buildQueryWithUnions('SELECT');
-        } else {
-            // Simple query without unions or minus
-            const whereClause = this.triplePatterns.concat(this.filters).join('\n  ');
-            return `SELECT * WHERE {\n  ${whereClause}\n}`;
+        // Build WHERE clause with subqueries
+        let whereClause = '';
+        
+        // Add main triple patterns
+        if (this.triplePatterns.length > 0) {
+            whereClause += this.triplePatterns.join('\n  ');
         }
+        
+        // Add subqueries for each shape
+        this.shapeSubqueries.forEach(subquery => {
+            const subqueryPatterns = subquery.triplePatterns.concat(subquery.filters);
+            whereClause += '\n  {\n    SELECT * WHERE {\n      ';
+            whereClause += subqueryPatterns.join('\n      ');
+            whereClause += '\n    }\n  }';
+        });
+        
+        // Add main filters
+        if (this.filters.length > 0) {
+            whereClause += '\n  ' + this.filters.join('\n  ');
+        }
+        
+        // Handle unions if present
+        if (this.unionBlocks.length > 0) {
+            const unionGroups = this.unionBlocks.map(unionGroup => {
+                const branches = unionGroup.map(branch => {
+                    const branchPatterns = branch.triplePatterns.concat(branch.filters);
+                    return `{\n    ${branchPatterns.join('\n    ')}\n  }`;
+                });
+                return branches.join(' UNION ');
+            });
+            whereClause += '\n  ' + unionGroups.join('\n  ');
+        }
+        
+        // Handle minus blocks if present
+        if (this.minusBlocks.length > 0) {
+            const minusGroups = this.minusBlocks.map(minusBlock => {
+                const minusPatterns = minusBlock.triplePatterns.concat(minusBlock.filters);
+                return `MINUS {\n    ${minusPatterns.join('\n    ')}\n  }`;
+            });
+            whereClause += '\n  ' + minusGroups.join('\n  ');
+        }
+        
+        return `SELECT * WHERE {\n  ${whereClause}\n}`;
     }
 
     buildAskQuery(uri, startVariable, startShape) {
-        if (this.unionBlocks.length > 0 || this.minusBlocks.length > 0) {
-            // Handle ASK with UNION and/or MINUS blocks
-            let whereClause = this.buildQueryWithUnions('').replace(/SELECT \* WHERE \{|\}$/g, '').trim();
-
-            if (uri) {
-                const replacement = `<${uri}>`;
-                whereClause = whereClause.replace(new RegExp(startVariable.replace('?', '\\?'), 'g'), replacement);
-            }
-
-            return `ASK {\n  ${whereClause}\n}`;
-        } else {
-            // Simple ASK without unions
-            let whereClause = this.triplePatterns.concat(this.filters).join('\n  ');
-
-            if (uri) {
-                const replacement = `<${uri}>`;
-                whereClause = whereClause.replace(new RegExp(startVariable.replace('?', '\\?'), 'g'), replacement);
-            }
-
-            return `ASK {\n  ${whereClause}\n}`;
+        // Build WHERE clause with subqueries
+        let whereClause = '';
+        
+        // Add main triple patterns
+        if (this.triplePatterns.length > 0) {
+            whereClause += this.triplePatterns.join('\n  ');
         }
+        
+        // Add subqueries for each shape
+        this.shapeSubqueries.forEach(subquery => {
+            const subqueryPatterns = subquery.triplePatterns.concat(subquery.filters);
+            whereClause += '\n  {\n    SELECT * WHERE {\n      ';
+            whereClause += subqueryPatterns.join('\n      ');
+            whereClause += '\n    }\n  }';
+        });
+        
+        // Add main filters
+        if (this.filters.length > 0) {
+            whereClause += '\n  ' + this.filters.join('\n  ');
+        }
+        
+        // Handle unions if present
+        if (this.unionBlocks.length > 0) {
+            const unionGroups = this.unionBlocks.map(unionGroup => {
+                const branches = unionGroup.map(branch => {
+                    const branchPatterns = branch.triplePatterns.concat(branch.filters);
+                    return `{\n    ${branchPatterns.join('\n    ')}\n  }`;
+                });
+                return branches.join(' UNION ');
+            });
+            whereClause += '\n  ' + unionGroups.join('\n  ');
+        }
+        
+        // Handle minus blocks if present
+        if (this.minusBlocks.length > 0) {
+            const minusGroups = this.minusBlocks.map(minusBlock => {
+                const minusPatterns = minusBlock.triplePatterns.concat(minusBlock.filters);
+                return `MINUS {\n    ${minusPatterns.join('\n    ')}\n  }`;
+            });
+            whereClause += '\n  ' + minusGroups.join('\n  ');
+        }
+
+        if (uri) {
+            const replacement = `<${uri}>`;
+            whereClause = whereClause.replace(new RegExp(startVariable.replace('?', '\\?'), 'g'), replacement);
+        }
+
+        return `ASK {\n  ${whereClause}\n}`;
     }
 }
 

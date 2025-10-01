@@ -1,0 +1,154 @@
+# metamodel_version: 1.7.0
+BASE <https://example.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX anzsrc: <http://fis.tu-chemnitz.de/ontology/anzsrc#>
+PREFIX kdsf: <http://kerndatensatz-forschung.de/owl/Basis#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX tucfis: <http://fis.tu-chemnitz.de/ontology/tucfis#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX vivo: <http://vivoweb.org/ontology/core#>
+
+
+
+
+start=@<Person>
+
+<Address> CLOSED {
+    (  $<Address_tes> (  vcard:country xsd:string ? ;
+          vcard:locality xsd:string ? ;
+          vcard:postalCode xsd:string ? ;
+          vcard:streetAddress xsd:string ?
+       ) ;
+       rdf:type [ vcard:Address ] ?
+    )
+}
+
+<Contact> CLOSED {
+    (  $<Contact_tes> (  vcard:hasName @<Name> ;
+          vcard:hasEmail @<Email> ;
+          vcard:hasTelephone @<Telephone> ? ;
+          vcard:hasURL @<URL> ? ;
+          vcard:hasTitle @<Title> ? ;
+          vcard:hasAddress @<Address> ?
+       ) ;
+       rdf:type [ vcard:Individual ] ?
+    )
+}
+
+<Email> CLOSED {
+    (  $<Email_tes> vcard:email xsd:string ? ;
+       rdf:type [ vcard:Email ] ?
+    )
+}
+
+<ERO0000005> CLOSED {
+    (  $<ERO0000005_tes> rdfs:label xsd:string ? ;
+       rdf:type [ obo:ERO_0000005 ] ?
+    )
+}
+
+<FieldOfResearch> CLOSED {
+    (  $<FieldOfResearch_tes> rdfs:label xsd:string ? ;
+       rdf:type [ anzsrc:FieldOfResearch ] ?
+    )
+}
+
+<LeaderRole> CLOSED {
+    (  $<LeaderRole_tes> (  rdfs:label xsd:string ? ;
+          vivo:roleContributesTo @<Struktureinheit> ?
+       ) ;
+       rdf:type [ vivo:LeaderRole ] ?
+    )
+}
+
+<Name> CLOSED {
+    (  $<Name_tes> (  vcard:familyName xsd:string ? ;
+          vcard:givenName xsd:string ?
+       ) ;
+       rdf:type [ vcard:Name ] ?
+    )
+}
+
+<Patent> CLOSED {
+    (  $<Patent_tes> rdfs:label xsd:string ? ;
+       rdf:type [ kdsf:Patent ] ?
+    )
+}
+
+<Person> CLOSED {
+    (  $<Person_tes> (  vivo:assigneeFor @<Patent> ? ;
+          obo:ARG_2000028 @<Contact> ;
+          tucfis:hasFieldOfResearch @<FieldOfResearch> ? ;
+          vivo:hasResearchArea @<FieldOfResearch> ? ;
+          vivo:overview xsd:string ? ;
+          tucfis:pursuesSdgGoal @<SdgGoal> ? ;
+          vivo:freetextKeyword xsd:string ? ;
+          obo:ERO_0000037 @<ERO0000005> ? ;
+          obo:RO_0000053 @<ResearcherRole> ? ;
+          obo:RO_0000053 @<LeaderRole> ? ;
+          obo:RO_0001025 @<Room> ? ;
+          vivo:relatedBy @<Publication> ? ;
+          vivo:orcidId xsd:anyURI ? ;
+          vivo:researcherId xsd:string ?
+       ) ;
+       rdf:type [ foaf:Person ] ?
+    )
+}
+
+<Project> CLOSED {
+    (  $<Project_tes> rdfs:label xsd:string ? ;
+       rdf:type [ tucfis:Project ] ?
+    )
+}
+
+<Publication> CLOSED {
+    (  $<Publication_tes> rdfs:label xsd:string ? ;
+       rdf:type [ kdsf:Publikation ] ?
+    )
+}
+
+<ResearcherRole> CLOSED {
+    (  $<ResearcherRole_tes> obo:BFO_0000054 @<Project> ? ;
+       rdf:type [ vivo:ResearcherRole ] ?
+    )
+}
+
+<Room> CLOSED {
+    (  $<Room_tes> rdfs:label xsd:string ? ;
+       rdf:type [ vivo:Room ] ?
+    )
+}
+
+<SdgGoal> CLOSED {
+    (  $<SdgGoal_tes> rdfs:label xsd:string ? ;
+       rdf:type [ tucfis:SdgGoal ] ?
+    )
+}
+
+<Struktureinheit> CLOSED {
+    (  $<Struktureinheit_tes> rdfs:label xsd:string ? ;
+       rdf:type [ tucfis:Struktureinheit ] ?
+    )
+}
+
+<Telephone> CLOSED {
+    (  $<Telephone_tes> vcard:telephone xsd:string ? ;
+       rdf:type [ foaf:Document ] ?
+    )
+}
+
+<Title> CLOSED {
+    (  $<Title_tes> vcard:title xsd:string ? ;
+       rdf:type [ vcard:Title ] ?
+    )
+}
+
+<URL> CLOSED {
+    (  $<URL_tes> vcard:url xsd:anyURI ? ;
+       rdf:type [ vcard:URL ] ?
+    )
+}
+
