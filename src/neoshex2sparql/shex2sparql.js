@@ -155,6 +155,9 @@ class SimplifiedShexToSparqlConverter {
             if (typeof tripleConstraint.valueExpr === 'string') {
                 // Shape reference - the object variable represents the shape instance
                 const referencedShape = this.findShapeById(tripleConstraint.valueExpr);
+                if (!referencedShape) {
+                    throw new Error("Referenced shape not found in schema!");
+                }
                 this.triplePatterns.pop();
                 const shapeVariable = this.generateShapeVariable(referencedShape);
                 this.triplePatterns.push(`${subjectVar} <${predicate}> ${shapeVariable} .`);
