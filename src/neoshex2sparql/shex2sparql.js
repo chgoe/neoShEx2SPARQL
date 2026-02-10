@@ -326,8 +326,7 @@ class SimplifiedShexToSparqlConverter {
 
     generateVariable(predicate, subject) {
         // Create a unique variable name from both predicate and subject
-        const input = `${predicate}_${subject}`;
-        const hash = crypto.randomUUID();
+        const hash = crypto.randomUUID().replaceAll('-', '');
         return `?litOrObj_${hash}`;
     }
 
